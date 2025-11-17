@@ -1,6 +1,6 @@
 {
   "name": "weather",
-  "homepage": "https://himalayaheck.github.io/Real-Weather",
+  
   "version": "0.1.0",
   "private": true,
   "dependencies": {
