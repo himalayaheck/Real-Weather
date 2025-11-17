@@ -2,12 +2,12 @@
 
 export default async function handler(req, res) {
   // 1. Get your secret API key from environment variables
-  const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
+  const API_KEY = process.env.WEATHER_API_KEY;;
   const BASE_URL = "https://api.openweathermap.org/data/2.5/";
 
   // 2. Get the query parameters (lat, lon, or q) from the React app
   const { lat, lon, q } = req.query;
-    
+
   let url;
 
   if (lat && lon) {
