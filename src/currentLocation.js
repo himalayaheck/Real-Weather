@@ -106,25 +106,34 @@ const Weather = () => {
   };
 
   
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          getWeather(position.coords.latitude, position.coords.longitude);
-        },
-        (err) => {
-          
-          getWeather(28.67, 77.22);
-          alert(
-            "You have disabled location service. Allow 'This APP' to access your location. Your current location will be used for calculating Real time weather."
-          );
-        }
-      );
-    } else {
-      alert("Geolocation not available");
-    }
+ 
+if (navigator.geolocation) {
+  const options = {
+    enableHighAccuracy: false, 
+    timeout: 10000,            
+    maximumAge: 0,
+  };
+
+  navigator.geolocation.getCurrentPosition(
     
-  }, []);
+    (position) => {
+      getWeather(position.coords.latitude, position.coords.longitude);
+    },
+    
+    (err) => {
+      console.error("Geolocation Error:", err.message);
+      
+      getWeather(28.67, 77.22);
+      alert(
+        `Could not detect your location (Error: ${err.message}). Showing default weather for Delhi.`
+      );
+    },
+   
+    options
+  );
+} else {
+  alert("Geolocation not available in this browser.");
+}
 
  
   useEffect(() => {
