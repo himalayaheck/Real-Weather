@@ -6,27 +6,11 @@ import ReactAnimatedWeather from "react-animated-weather";
 
 const dateBuilder = (d) => {
   let months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
   ];
   let days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
   ];
 
   let day = days[d.getDay()];
@@ -60,16 +44,20 @@ const Weather = () => {
     errorMsg: undefined,
   });
 
-  useEffect(() => {
-    const getPosition = (options) => {
-      return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, options);
-      });
-    };
-
-    const getWeather = async (lat, lon) => {
+ 
+  const getWeather = async (lat, lon) => {
+    try {
+      
       const api_call = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
+
+      
+      if (!api_call.ok) {
+        console.error("API Error:", api_call.status, api_call.statusText);
+        return; 
+      }
+
       const data = await api_call.json();
+
       setState((prevState) => ({
         ...prevState,
         lat: lat,
@@ -81,6 +69,8 @@ const Weather = () => {
         main: data.weather[0].main,
         country: data.sys.country,
       }));
+
+      // Icon Logic
       switch (data.weather[0].main) {
         case "Haze":
           setState((prevState) => ({ ...prevState, icon: "CLEAR_DAY" }));
@@ -101,8 +91,6 @@ const Weather = () => {
           setState((prevState) => ({ ...prevState, icon: "SLEET" }));
           break;
         case "Fog":
-          setState((prevState) => ({ ...prevState, icon: "FOG" }));
-          break;
         case "Smoke":
           setState((prevState) => ({ ...prevState, icon: "FOG" }));
           break;
@@ -112,26 +100,39 @@ const Weather = () => {
         default:
           setState((prevState) => ({ ...prevState, icon: "CLEAR_DAY" }));
       }
-    };
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
 
+  
+  useEffect(() => {
     if (navigator.geolocation) {
-      getPosition()
-        .then((position) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
           getWeather(position.coords.latitude, position.coords.longitude);
-        })
-        .catch((err) => {
+        },
+        (err) => {
+          
           getWeather(28.67, 77.22);
           alert(
             "You have disabled location service. Allow 'This APP' to access your location. Your current location will be used for calculating Real time weather."
           );
-        });
+        }
+      );
     } else {
       alert("Geolocation not available");
     }
+    
+  }, []);
 
+ 
+  useEffect(() => {
     const timerID = setInterval(() => {
-      getWeather(state.lat, state.lon);
-    }, 6000);
+        if(state.lat && state.lon) {
+            getWeather(state.lat, state.lon);
+        }
+    }, 600000); 
 
     return () => {
       clearInterval(timerID);
@@ -176,7 +177,7 @@ const Weather = () => {
   } else {
     return (
       <React.Fragment>
-        <img src={loader} style={{ width: "50%", WebkitUserDrag: "none" }} />
+        <img src={loader} style={{ width: "50%", WebkitUserDrag: "none" }} alt="loading" />
         <h3 style={{ color: "white", fontSize: "22px", fontWeight: "600" }}>
           Detecting your location
         </h3>

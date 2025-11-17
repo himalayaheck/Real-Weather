@@ -65,7 +65,7 @@ function Forcast(props) {
             {" "}
             <img
               src="https://images.avishkaar.cc/workflow/newhp/search-white.png"
-              onClick={search}
+              onClick={() => search(query)} 
             />
           </div>
         </div>
