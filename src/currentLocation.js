@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import apiKeys from "./apiKeys";
 import Clock from "react-live-clock";
 import Forcast from "./forcast";
 import loader from "./images/WeatherIcons.gif";
@@ -69,9 +68,7 @@ const Weather = () => {
     };
 
     const getWeather = async (lat, lon) => {
-      const api_call = await fetch(
-        `${apiKeys.base}weather?lat=${lat}&lon=${lon}&units=metric&APPID=${apiKeys.key}`
-      );
+      const api_call = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
       const data = await api_call.json();
       setState((prevState) => ({
         ...prevState,

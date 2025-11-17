@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Component } from "react";
 import axios from "axios";
-import apiKeys from "./apiKeys";
 import ReactAnimatedWeather from "react-animated-weather";
 
 function Forcast(props) {
@@ -9,11 +8,10 @@ function Forcast(props) {
   const [weather, setWeather] = useState({});
 
   const search = (city) => {
+    const S_city = city !== "[object Object]" ? city : query;
     axios
       .get(
-        `${apiKeys.base}weather?q=${
-          city != "[object Object]" ? city : query
-        }&units=metric&APPID=${apiKeys.key}`
+        `/api/weather?q=${S_city}`
       )
       .then((response) => {
         setWeather(response.data);
